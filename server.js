@@ -23,6 +23,15 @@ if (!apiKey) {
 // Initialize the Generative AI client
 const genAI = new GoogleGenerativeAI(apiKey);
 
+// Helper function to remove markdown code blocks from the text
+const removeMarkdown = (text) => {
+  const jsonMatch = text.match(/```json\n([\s\S]*)\n```/);
+  if (jsonMatch && jsonMatch.length > 1) {
+    return jsonMatch[1];
+  }
+  return text;
+};
+
 // A simple GET endpoint for a health check
 app.get("/", (req, res) => {
   res.send("Server is running.");
@@ -70,9 +79,12 @@ app.post("/upload-photos", upload.single("file"), async (req, res) => {
     const responseText = result.response.text();
     console.log(`✅ AI response received: ${responseText}`);
 
+    // Clean the response text before attempting to parse it
+    const cleanedText = removeMarkdown(responseText);
+
     try {
       // Attempt to parse the JSON output from the model
-      output = JSON.parse(responseText);
+      output = JSON.parse(cleanedText);
     } catch (parseError) {
       console.error("❌ Failed to parse AI response as JSON:", parseError);
       output = { items: [] }; // Fallback to an empty array to prevent a crash
