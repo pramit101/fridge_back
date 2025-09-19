@@ -76,7 +76,8 @@ Rules:
 - Always provide estimated shelf life values, even if the actual expiry is printed on the item. 
 - Do not add explanations, notes, or markdown formatting.
 - Assume all items were purchased today.
-- Shelf life can be approximate; the user will adjust later if needed.`,
+- Shelf life can be approximate; the user will adjust later if needed.
+- strictly put the exipiration in number of days not weeks or months`,
       },
     ];
 
