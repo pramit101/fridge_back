@@ -51,7 +51,7 @@ app.post("/upload-photos", upload.single("file"), async (req, res) => {
 
     // Get the file data directly from the buffer
     const imageBuffer = req.file.buffer;
-    
+
     // Use the correct model for image processing
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -62,13 +62,24 @@ app.post("/upload-photos", upload.single("file"), async (req, res) => {
           mimeType: req.file.mimetype,
           data: imageBuffer.toString("base64"),
         },
-      },
-      {
-        text: `Identify only the food and drink items in this fridge.
-               Ignore packaging, labels, or non-food objects.
-               Return a JSON object like: { "items": ["milk", "eggs", "cheese"] }`,
+      }, {
+        text: `Identify only the food and drink items in this fridge. 
+Ignore packaging, labels, or non-food objects. 
+
+Return ONLY a JSON object in this format:
+{
+  "items": ["milk | 3 days", "eggs | 3 weeks", "cheese |2 months"],
+ 
+}
+
+Rules:
+- Always provide estimated shelf life values, even if the actual expiry is printed on the item. 
+- Do not add explanations, notes, or markdown formatting.
+- Assume all items were purchased today.
+- Shelf life can be approximate; the user will adjust later if needed.`,
       },
     ];
+
 
     console.log("⏳ Sending request to Generative AI model...");
 
